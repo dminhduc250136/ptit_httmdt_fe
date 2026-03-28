@@ -1,0 +1,30 @@
+server:
+  port: 8088
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/laptop_db
+    username: admin
+    password: adminpassword
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      allowed-origins: http://localhost:*,http://127.0.0.1:*
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+
+app:
+  jwt:
+    secret: YourSuperSecretKeyForJwtTokenGenerationMustBeAtLeast256BitsLong!!
+    expiration: 86400000
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173
