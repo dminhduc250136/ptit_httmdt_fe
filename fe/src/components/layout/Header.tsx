@@ -54,6 +54,17 @@ export default function Header() {
             .catch(() => setCategories([]));
     }, []);
 
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        const trimmed = searchQuery.trim();
+        if (trimmed) {
+            router.push(`/laptops?search=${encodeURIComponent(trimmed)}`);
+            setIsMenuOpen(false);
+        } else {
+            router.push("/laptops");
+        }
+    };
+
     const handleCartClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
         const token = getAuthToken();
         if (!token) {
@@ -120,7 +131,7 @@ export default function Header() {
                     </div>
 
                     {/* Search Bar */}
-                    <div className="flex-1 max-w-xl mx-4 hidden md:block">
+                    <form onSubmit={handleSearch} className="flex-1 max-w-xl mx-4 hidden md:block">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                             <input
@@ -131,7 +142,7 @@ export default function Header() {
                                 className="w-full pl-10 pr-4 py-2.5 bg-background rounded-xl border border-border hover:border-border-hover focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20 text-sm transition-all duration-200"
                             />
                         </div>
-                    </div>
+                    </form>
 
                     {/* Right Actions */}
                     <div className="flex items-center gap-1 sm:gap-2">
@@ -248,14 +259,16 @@ export default function Header() {
                 {isMenuOpen && (
                     <div className="lg:hidden border-t border-border py-4 space-y-2">
                         {/* Mobile Search */}
-                        <div className="md:hidden relative mb-3">
+                        <form onSubmit={handleSearch} className="md:hidden relative mb-3">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
                             <input
                                 type="text"
                                 placeholder="Tìm kiếm laptop..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2.5 bg-background rounded-xl border border-border text-sm"
                             />
-                        </div>
+                        </form>
 
                         {categories.map((cat) => (
                             <Link

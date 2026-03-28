@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, Search } from "lucide-react";
 import Breadcrumb from "@/components/Breadcrumb";
 import FilterSidebar, { type FilterState } from "@/components/FilterSidebar";
 import SortBar, { type SortOption } from "@/components/SortBar";
@@ -21,6 +21,7 @@ const priceRanges = [
 export default function LaptopsPage() {
     const searchParams = useSearchParams();
     const categoryFromQuery = searchParams.get("category") || undefined;
+    const searchFromQuery = searchParams.get("search") || undefined;
     const [products, setProducts] = useState<Product[]>([]);
     const [brands, setBrands] = useState<Brand[]>([]);
     const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ export default function LaptopsPage() {
     useEffect(() => {
         let active = true;
         Promise.all([
-            getProducts({ size: 100 }),
+            getProducts({ size: 100, search: searchFromQuery }),
             getBrands(),
         ])
             .then(([productRes, brandRes]) => {
@@ -66,7 +67,7 @@ export default function LaptopsPage() {
         return () => {
             active = false;
         };
-    }, [categoryFromQuery]);
+    }, [categoryFromQuery, searchFromQuery]);
 
     // Filter logic
     const filteredProducts = useMemo(() => {
@@ -141,11 +142,22 @@ export default function LaptopsPage() {
                         className="text-2xl sm:text-3xl font-bold text-primary"
                         style={{ fontFamily: "var(--font-space-grotesk)" }}
                     >
-                        Tất cả Laptop
+                        {searchFromQuery ? `Kết quả tìm kiếm` : "Tất cả Laptop"}
                     </h1>
                     <p className="text-sm text-muted mt-1">
-                        Khám phá bộ sưu tập laptop cao cấp từ các thương hiệu hàng đầu
+                        {searchFromQuery
+                            ? `Hiển thị kết quả cho: "${searchFromQuery}"`
+                            : "Khám phá bộ sưu tập laptop cao cấp từ các thương hiệu hàng đầu"}
                     </p>
+                    {searchFromQuery && (
+                        <Link
+                            href="/laptops"
+                            className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 bg-white border border-border rounded-xl text-sm font-medium text-primary hover:border-accent transition-colors cursor-pointer"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                            Xóa tìm kiếm
+                        </Link>
+                    )}
                 </div>
 
                 {/* Mobile Filter Button */}

@@ -2,12 +2,24 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Loader2, Package, ShoppingBag, Users, Wallet } from "lucide-react";
+import { Loader2, Package, ShoppingBag, Users, Wallet, ArrowUpRight } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { useAdminGuard } from "@/components/admin/useAdminGuard";
 import { getAdminDashboard } from "@/lib/api";
 import { formatPrice } from "@/lib/utils";
 import type { AdminDashboard } from "@/lib/types";
+
+const STATUS_BADGE: Record<string, string> = {
+    PENDING: "badge-pending",
+    CONFIRMED: "badge-confirmed",
+    PROCESSING: "badge-processing",
+    SHIPPING: "badge-shipping",
+    DELIVERED: "badge-delivered",
+    COMPLETED: "badge-completed",
+    CANCELLED: "badge-cancelled",
+    RETURNED: "badge-returned",
+    CANCEL_REQUESTED: "badge-cancel_requested",
+};
 
 export default function AdminDashboardPage() {
     const { token, checking } = useAdminGuard();
@@ -25,74 +37,135 @@ export default function AdminDashboardPage() {
 
     if (checking || loading) {
         return (
-            <div className="max-w-5xl mx-auto px-4 py-12 flex items-center justify-center gap-2 text-muted">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Đang tải dashboard admin...
+            <div className="flex items-center justify-center py-20 gap-2 text-slate-400">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span className="text-sm">Đang tải dashboard...</span>
             </div>
         );
     }
 
     if (error || !dashboard) {
         return (
-            <div className="max-w-5xl mx-auto px-4 py-12">
-                <p className="text-sm text-cta">{error || "Không có dữ liệu dashboard"}</p>
+            <div className="flex items-center justify-center py-20">
+                <p className="text-sm text-red-500">{error || "Không có dữ liệu dashboard"}</p>
             </div>
         );
     }
 
     const cards = [
-        { title: "Người dùng", value: dashboard.totalUsers, subtitle: `${dashboard.activeUsers} đang hoạt động`, icon: Users, href: "/admin/users" },
-        { title: "Sản phẩm", value: dashboard.totalProducts, subtitle: `${dashboard.lowStockProducts} sắp hết hàng`, icon: Package, href: "/admin/products" },
-        { title: "Đơn hàng", value: dashboard.totalOrders, subtitle: `${dashboard.pendingOrders} cần xử lý`, icon: ShoppingBag, href: "/admin/orders" },
-        { title: "Doanh thu", value: formatPrice(dashboard.totalRevenue), subtitle: "Đơn đã giao/hoàn thành", icon: Wallet, href: "/admin/orders" },
+        {
+            title: "Người dùng",
+            value: dashboard.totalUsers,
+            subtitle: `${dashboard.activeUsers} đang hoạt động`,
+            icon: Users,
+            href: "/admin/users",
+            accent: "blue" as const,
+            iconBg: "bg-blue-50 text-blue-500",
+        },
+        {
+            title: "Sản phẩm",
+            value: dashboard.totalProducts,
+            subtitle: `${dashboard.lowStockProducts} sắp hết hàng`,
+            icon: Package,
+            href: "/admin/products",
+            accent: "emerald" as const,
+            iconBg: "bg-emerald-50 text-emerald-500",
+        },
+        {
+            title: "Đơn hàng",
+            value: dashboard.totalOrders,
+            subtitle: `${dashboard.pendingOrders} cần xử lý`,
+            icon: ShoppingBag,
+            href: "/admin/orders",
+            accent: "amber" as const,
+            iconBg: "bg-amber-50 text-amber-500",
+        },
+        {
+            title: "Doanh thu",
+            value: formatPrice(dashboard.totalRevenue),
+            subtitle: "Đơn đã giao/hoàn thành",
+            icon: Wallet,
+            href: "/admin/orders",
+            accent: "violet" as const,
+            iconBg: "bg-violet-50 text-violet-500",
+        },
     ];
 
     return (
-        <AdminShell title="Admin Dashboard" subtitle="Tổng quan nhanh hoạt động hệ thống">
+        <AdminShell title="Dashboard" subtitle="Tổng quan nhanh hoạt động hệ thống">
+            {/* Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
                 {cards.map((card) => (
                     <Link
                         key={card.title}
                         href={card.href}
-                        className="bg-white border border-border rounded-2xl p-4 hover:border-accent transition-colors"
+                        className="admin-stat-card bg-white rounded-2xl border border-slate-200/80 p-5 group"
+                        data-accent={card.accent}
                     >
                         <div className="flex items-start justify-between gap-3">
                             <div>
-                                <p className="text-sm text-muted">{card.title}</p>
-                                <p className="text-xl font-bold text-primary mt-1">{card.value}</p>
-                                <p className="text-xs text-muted mt-1">{card.subtitle}</p>
+                                <p className="text-[13px] font-medium text-slate-500">{card.title}</p>
+                                <p className="text-2xl font-bold text-slate-900 mt-1.5" style={{ fontFamily: "var(--font-space-grotesk)" }}>
+                                    {card.value}
+                                </p>
+                                <p className="text-xs text-slate-400 mt-1">{card.subtitle}</p>
                             </div>
-                            <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center">
+                            <div className={`w-11 h-11 rounded-xl ${card.iconBg} flex items-center justify-center`}>
                                 <card.icon className="w-5 h-5" />
                             </div>
+                        </div>
+                        <div className="mt-3 flex items-center gap-1 text-xs font-medium text-slate-400 group-hover:text-blue-500 transition-colors">
+                            <span>Xem chi tiết</span>
+                            <ArrowUpRight className="w-3 h-3" />
                         </div>
                     </Link>
                 ))}
             </div>
 
-            <div className="mt-6 bg-white border border-border rounded-2xl overflow-hidden">
-                <div className="px-4 py-3 border-b border-border">
-                    <h2 className="text-sm font-semibold text-primary">Đơn hàng mới nhất</h2>
+            {/* Recent Orders */}
+            <div className="mt-6 bg-white rounded-2xl border border-slate-200/80 overflow-hidden">
+                <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <h2
+                        className="text-sm font-bold text-slate-900"
+                        style={{ fontFamily: "var(--font-space-grotesk)" }}
+                    >
+                        Đơn hàng mới nhất
+                    </h2>
+                    <Link
+                        href="/admin/orders"
+                        className="text-xs font-medium text-blue-500 hover:text-blue-600 transition-colors flex items-center gap-1"
+                    >
+                        Xem tất cả
+                        <ArrowUpRight className="w-3 h-3" />
+                    </Link>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[720px] text-sm">
-                        <thead className="bg-slate-50 text-primary-light">
-                            <tr>
-                                <th className="text-left px-4 py-3">Mã đơn</th>
-                                <th className="text-left px-4 py-3">Khách hàng</th>
-                                <th className="text-left px-4 py-3">Tổng tiền</th>
-                                <th className="text-left px-4 py-3">Trạng thái</th>
-                                <th className="text-left px-4 py-3">Thời gian</th>
+                        <thead>
+                            <tr className="bg-slate-50/80">
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Mã đơn</th>
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Khách hàng</th>
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tổng tiền</th>
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Trạng thái</th>
+                                <th className="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Thời gian</th>
                             </tr>
                         </thead>
                         <tbody>
                             {dashboard.recentOrders.map((order) => (
-                                <tr key={order.id} className="border-t border-border">
-                                    <td className="px-4 py-3 font-semibold text-primary">#{order.orderCode}</td>
-                                    <td className="px-4 py-3 text-primary-light">{order.customerName}</td>
-                                    <td className="px-4 py-3 text-primary">{formatPrice(order.total)}</td>
-                                    <td className="px-4 py-3 text-primary-light">{order.orderStatus}</td>
-                                    <td className="px-4 py-3 text-muted">{new Date(order.createdAt).toLocaleString("vi-VN")}</td>
+                                <tr key={order.id} className="admin-table-row border-t border-slate-100">
+                                    <td className="px-5 py-3.5">
+                                        <span className="font-semibold text-slate-900">#{order.orderCode}</span>
+                                    </td>
+                                    <td className="px-5 py-3.5 text-slate-600">{order.customerName}</td>
+                                    <td className="px-5 py-3.5 font-semibold text-slate-900">{formatPrice(order.total)}</td>
+                                    <td className="px-5 py-3.5">
+                                        <span className={`badge-status ${STATUS_BADGE[order.orderStatus] || "badge-pending"}`}>
+                                            {order.orderStatus}
+                                        </span>
+                                    </td>
+                                    <td className="px-5 py-3.5 text-slate-400 text-[13px]">
+                                        {new Date(order.createdAt).toLocaleString("vi-VN")}
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

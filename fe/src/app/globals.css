@@ -101,3 +101,208 @@ h6 {
     border-color: var(--color-accent);
   }
 }
+
+/* ─── Admin Panel Styles ────────────────────────────────────── */
+
+/* Admin sidebar */
+.admin-sidebar {
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-sidebar-overlay {
+  transition: opacity 300ms ease;
+}
+
+/* Admin stat cards */
+.admin-stat-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.admin-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+}
+
+.admin-stat-card[data-accent="blue"]::before {
+  background: linear-gradient(90deg, #3B82F6, #60A5FA);
+}
+
+.admin-stat-card[data-accent="emerald"]::before {
+  background: linear-gradient(90deg, #10B981, #34D399);
+}
+
+.admin-stat-card[data-accent="amber"]::before {
+  background: linear-gradient(90deg, #F59E0B, #FBBF24);
+}
+
+.admin-stat-card[data-accent="violet"]::before {
+  background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+}
+
+/* Status badges */
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.badge-pending {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.badge-confirmed,
+.badge-processing {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+
+.badge-shipping {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.badge-delivered,
+.badge-completed {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.badge-cancelled,
+.badge-returned {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.badge-cancel_requested {
+  background: #FED7AA;
+  color: #9A3412;
+}
+
+.badge-paid {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.badge-failed {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+.badge-refunded {
+  background: #E0E7FF;
+  color: #3730A3;
+}
+
+.badge-admin {
+  background: #EDE9FE;
+  color: #6D28D9;
+}
+
+.badge-customer {
+  background: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.badge-active {
+  background: #D1FAE5;
+  color: #065F46;
+}
+
+.badge-locked {
+  background: #FEE2E2;
+  color: #991B1B;
+}
+
+/* Admin table row */
+.admin-table-row {
+  transition: background-color 150ms ease;
+}
+
+.admin-table-row:hover {
+  background-color: #F8FAFC;
+}
+
+/* Admin nav item */
+.admin-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 150ms ease, color 150ms ease;
+  color: #94A3B8;
+}
+
+.admin-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #E2E8F0;
+}
+
+.admin-nav-item.active {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: #60A5FA;
+  font-weight: 600;
+}
+
+/* Admin action button */
+.admin-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid #E2E8F0;
+  transition: all 150ms ease;
+  color: #64748B;
+  background: white;
+}
+
+.admin-action-btn:hover {
+  border-color: #3B82F6;
+  color: #3B82F6;
+  background: #EFF6FF;
+}
+
+.admin-action-btn.danger:hover {
+  border-color: #EF4444;
+  color: #EF4444;
+  background: #FEF2F2;
+}
+
+/* Admin modal */
+.admin-modal-enter {
+  animation: adminModalIn 200ms ease-out;
+}
+
+@keyframes adminModalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
